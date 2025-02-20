@@ -5,7 +5,6 @@ from alien import Alien, miniboss
 from random import choice, randint
 from laser import Laser
 
-
 class Game:
     def __init__(self):
         #health
@@ -31,7 +30,6 @@ class Game:
         self.alien_direction = 1
         self.extra = pygame.sprite.GroupSingle()
         self.extra_spawn_time = randint(400,800)
-
 
     def create_obstacle(self, x_start, y_start, offset_x):
         for row_index, row in enumerate(self.shape):
@@ -154,6 +152,7 @@ class Game:
         self.extra.draw(screen)
         self.display_lives()
         self.displayscore()
+
 if __name__ == '__main__':
     pygame.init()
     screen_width= 600
