@@ -30,6 +30,14 @@ class Game:
         self.alien_direction = 1
         self.extra = pygame.sprite.GroupSingle()
         self.extra_spawn_time = randint(400,800)
+        #audio
+        music = pygame.mixer.Sound('./audio/Theme.wav')
+        music.set_volume(0.2)
+        music.play(loops = -1)
+        # self.laser_sound = pygame.mixer.Sound('./audio/laser.wav')
+        # self.laser_sound.set_volume(0.5)
+        self.explosion_sound = pygame.mixer.Sound('./audio/explosion.wav')
+        self.explosion_sound.set_volume(0.5)
 
     def create_obstacle(self, x_start, y_start, offset_x):
         for row_index, row in enumerate(self.shape):
@@ -81,6 +89,7 @@ class Game:
             random_alien = choice(self.aliens.sprites())
             laser_sprite = Laser(random_alien.rect.center,6,screen_height)
             self.alien_lasers.add(laser_sprite)
+            self.laser_sound.play()
 
     def extra_alien_timer(self):
         self.extra_spawn_time -= 1
@@ -95,11 +104,13 @@ class Game:
                 if pygame.sprite.spritecollide(laser,self.blocks,True):
                     laser.kill()
 
+
                 aliens_hit = pygame.sprite.spritecollide(laser, self.aliens, True)
                 if aliens_hit:
                     for alien in aliens_hit:
                         self.score += alien.value
                     laser.kill()
+                    self.explosion_sound.play
 
                 if pygame.sprite.spritecollide(laser,self.extra,True):
                     laser.kill()
@@ -153,6 +164,23 @@ class Game:
         self.display_lives()
         self.displayscore()
 
+class RETRO:
+    def __init__(self):
+        self.tv = pygame.image.load('./tv.png').convert_alpha()
+        self.tv = pygame.transform.scale(self.tv,(screen_width,screen_height))
+    def create_crt_lines(self):
+        line_height = 3
+        line_amount = int(screen_height / line_height)
+        for line in range(line_amount):
+            y_pos = line * line_height
+            pygame.draw.line(self.tv,'black',(0,y_pos),(screen_width,y_pos),1)
+
+    def draw(self):
+        self.tv.set_alpha(randint(75,90))
+        screen.blit(self.tv,(0,0))
+        self.create_crt_lines()
+
+
 if __name__ == '__main__':
     pygame.init()
     screen_width= 600
@@ -160,6 +188,7 @@ if __name__ == '__main__':
     screen = pygame.display.set_mode((screen_width,screen_height))
     clock = pygame.time.Clock()
     game = Game()
+    retro = RETRO()
 
     ALIENLASER = pygame.USEREVENT + 1
     pygame.time.set_timer(ALIENLASER, 800)
@@ -173,6 +202,7 @@ if __name__ == '__main__':
                 game.alien_shoot()
         screen.fill((30,30,30))
         game.run()
+        retro.draw()
 
         pygame.display.flip()
         clock.tick(60)
