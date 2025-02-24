@@ -11,7 +11,8 @@ class Player(pygame.sprite.Sprite):
         self.ready = True
         self.laser_time = 0
         self.laser_cooldown = 600
-
+        self.laser_sound = pygame.mixer.Sound('./audio/laser.wav')
+        self.laser_sound.set_volume(0.2)
         self.lasers = pygame.sprite.Group()
 
     def get_input(self):
@@ -41,6 +42,8 @@ class Player(pygame.sprite.Sprite):
 
     def shoot_laser(self):
         self.lasers.add(Laser(self.rect.center, -8,self.rect.bottom))
+        self.laser_sound.play()
+
 
     def update(self):
         self.get_input()
